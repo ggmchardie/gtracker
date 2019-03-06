@@ -1,8 +1,16 @@
 ## Gtracker terminal app
 
 ##GEMS
-require 'tty/prompt'
+#progressbar
+require 'tty/progressbar'
+bar = TTY::ProgressBar.new("downloading [:bar}", total: 30)
+30.times do
+  sleep(0.1)
+  bar.advance(1)
+end
 
+#prompt
+require 'tty/prompt'
 prompt = TTY::Prompt.new
 
 ##Welcome message
@@ -30,19 +38,31 @@ prompt.say(result[:goal_two])
 prompt.say(result[:goal_three])
 
 ##completed
-completed =
+completed = 
 prompt.yes?("Have you completed any of your goals this week?")
 
-##How many times completed
+##which were completed
 if completed == true
-  prompt.select("Which of your goals did you complete?") do |menu|
+    then
+      prompt.select("Which of your goals did you complete?") do |menu|
+      one = menu.choice(result[:goal_one])
+      two = menu.choice(result[:goal_two])
+      three = menu.choice(result[:goal_three])
 
-    menu.choice(result[:goal_one])
-    menu.choice(result[:goal_two])
-    menu.choice(result[:goal_three])
-  end
-  
-  else prompt.say("Keep trying")
+      week = 
+      prompt.ask("How many days this week did you complete this goal? 0-7") { |q| q.in('0-7')}
+
+        prompt.say(week + "times!? Good job!")
+
   end
 
-prompt.say ("I does not mater how slowly you go as long as you do not stop\n - Confucicius")
+  else prompt.say("Keep trying, you'll get there")
+        set = 
+        prompt.yes?("Would you like to set some goals?")
+  end
+
+  if set == true
+    then 
+  else
+    prompt.say ("I does not mater how slowly you go as long as you do not stop\n - Confucicius")
+    end
