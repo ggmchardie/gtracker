@@ -1,29 +1,48 @@
 ## Gtracker terminal app
 
-#welcome
-puts "Hi There! Welcome to Gtracker :)"
+##GEMS
+require 'tty/prompt'
 
-#name input
-puts "Firstly, what's your name?"
-name = gets.chomp
+prompt = TTY::Prompt.new
 
-puts "Welcome " + name
+##Welcome message
+prompt.say("Hi There! Welcome to Gtracker :)\n")
 
+##Name prompt
+prompt.ask("What is your name?")
 
-#view question
-puts "Would you like to view or set your goals?"
+##View or select prompt
+#prompt.select("Would you like to view or set your goals?") do |menu|
 
+##set
+prompt.say("Please set your three goals", echo:true)
 
-#view
-case  (gets.chomp)
-when "view"
-    puts "Goals:"
+result = prompt.collect do
+  key(:goal_one).ask("What's your first goal?", required: true)
+  key(:goal_two).ask("What's your second goal?", required: true)
+  key(:goal_three).ask("What's your third goal?", required: true)
+  end
 
-#set
-when "set" 
-    puts "Please enter your three goals"
+##view set goals
+prompt.say("Here are your set goals:")
+prompt.say(result[:goal_one]) 
+prompt.say(result[:goal_two]) 
+prompt.say(result[:goal_three])
 
-#neither
-else
-    puts "please type either view or set"
-end
+##completed
+completed =
+prompt.yes?("Have you completed any of your goals this week?")
+
+##How many times completed
+if completed == true
+  prompt.select("Which of your goals did you complete?") do |menu|
+
+    menu.choice(result[:goal_one])
+    menu.choice(result[:goal_two])
+    menu.choice(result[:goal_three])
+  end
+  
+  else prompt.say("Keep trying")
+  end
+
+prompt.say ("I does not mater how slowly you go as long as you do not stop\n - Confucicius")
